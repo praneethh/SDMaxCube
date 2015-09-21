@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<style type="text/css">
+body { margin: 0; }
+canvas { width: 100%; height: 100% }
+</style>
+<title>3D-Cube Visualization</title>
+<script>"three.min.js"</script>
+</head>
+<body>
+
+<script>
+    var camera, controls,scene, renderer;
+	var  material, mesh, directionalLight, pointLight, ambient;
+	var start = Date.now();
+	var clock = new THREE.Clock();
+
+	var canvas_width = 500;
+	var canvas_height = 500;
+	renderer = new THREE.CanvasRenderer();
+	renderer.setSize( canvas_width, canvas_height);
+	document.body.appendChild( renderer.domElement );
+
+	getCubeGeometry();
+	animate();
+
+	function getCubeGeometry(){
+		geometry = new THREE.CubeGeometry(200,200,200);
+		init(geometry);
+	}
+
+
+	
+	function getRectPyramidGeometry() {
+		
+		/////square pyramid...would prefer to be able to make rectangle base as well///
+		var geometry = new THREE.CylinderGeometry( 0, 150, 106.066, 4, 1 );
+		init(geometry);
+	}
+	
+	function getTriPyramidGeometry() {
+		var geometry = new THREE.TetrahedronGeometry( 200, 0);
+		init(geometry);
+		}
+	function init(geometry, isCustom) {
+		
+		camera = new THREE.PerspectiveCamera( 75, canvas_width/canvas_height, 1, 10000 );
+		camera.position.z = 300;
+		
+		scene = new THREE.Scene();
+		
+		material = new THREE.MeshLambertMaterial( { color: 0x00004c  } );
+		mesh = new THREE.Mesh( geometry, material );
+		
+		if (isCustom){
+			material.side = THREE.DoubleSide;
+			mesh.doubleSided = true;
+		}
+		
+		scene.add( mesh );
+		
+		ambient = new THREE.AmbientLight( 0x0000ff );
+		ambient.position.set(0, -70, 100).normalize();
+		scene.add( ambient );
+
+		directionalLight = new THREE.DirectionalLight( 0xffffff );
+		directionalLight.position = camera.position;
+		scene.add( directionalLight );;
+ 
+	}
+
+	function animate() {
+
+		// note: three.js includes requestAnimationFrame shim
+		requestAnimationFrame( animate );
+
+		render();
+	}
+	function render(){
+		var delta = Date.now() - start;
+		
+		directionalLight.position = camera.position;
+		
+		//mesh.position.y = Math.abs( Math.sin( delta * 0.002 ) ) * 150;
+		mesh.rotation.x = delta * 0.0003;
+		mesh.rotation.z = delta * 0.0002;
+	
+		
+		renderer.render( scene, camera );
+
+	}
+
+/* If shapes are mentioned in a drop down list:: Here Drop down Element name: Solid Type
+
+ var mySelect = document.getElementById("solidType");
+	
+	mySelect.onchange = function() {
+		if (mySelect.value === "rectPrism"){
+			//alert("rect Prism");
+			getCubeGeometry();
+		}else if (mySelect.value === "triPrism"){
+			//alert("cylinder");
+			getTriPrismGeometry();
+		}
+		else if (mySelect.value === "cylinder"){
+			//alert("cylinder");
+			getCylinderGeometry();
+		}
+		else if (mySelect.value === "sphere"){
+			//alert("cylinder");
+			getSphereGeometry();
+		}else if (mySelect.value === "rectPyr"){
+			//alert("cylinder");
+			getRectPyramidGeometry();
+		}else if (mySelect.value === "triPyr"){
+			//alert("cylinder");
+			getTriPyramidGeometry();
+		}else if (mySelect.value === "cone"){
+			//alert("cylinder");
+			getConeGeometry();
+		}
+	} */
+		</script>
+</body>
+</html>
